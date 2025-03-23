@@ -1,0 +1,1 @@
+for all my competitive programming stuff
