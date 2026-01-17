@@ -4,15 +4,13 @@
         {
             "label": "Build and Run CP",
             "type": "shell",
-            "command": "g++",
-            "args": [
-                "-g",
-                "${file}",
-                "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe",
-                "-std=c++17",
-                "-O2"
-            ],
+            "command": "g++ -g \"${file}\" -o \"${workspaceFolder}\\a.exe\" -std=c++17 -O2 && \"${workspaceFolder}\\a.exe\"",
+            "options": {
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": ["/d", "/c"]
+                }
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -20,7 +18,8 @@
             "presentation": {
                 "reveal": "always",
                 "panel": "new"
-            }
+            },
+            "problemMatcher": ["$gcc"]
         }
     ]
 }
