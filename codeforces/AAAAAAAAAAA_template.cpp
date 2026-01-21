@@ -2,6 +2,16 @@
 using namespace std;
 
 
-int main(){
+void solve() {
     
+}
+
+int main() {
+    cin.tie(NULL);
+    int t;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+    return 0;
 }
