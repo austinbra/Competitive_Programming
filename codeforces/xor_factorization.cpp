@@ -12,7 +12,7 @@ void solve() {
         }
         cout << "\n";
     } else {
-        
+         
     }
     cout << "\n";
 }
