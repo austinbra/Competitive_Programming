@@ -17,7 +17,7 @@ module skid_buffer #(
     logic [DATA_WIDTH-1:0] skid_data;
     logic skid_valid;
 
-    always_comb begin // sets m_valid and m_data
+    always_comb begin // m_valid, m_data
         if (!resetn) begin
             m_valid = 1'b0;
             m_data  = '0;
@@ -31,14 +31,14 @@ module skid_buffer #(
             end
         end
     end
-    always_ff @(posedge clk) begin //only sets skid and s_ready
+    always_ff @(posedge clk) begin //s_ready, skid_full, skid_data
         if (!resetn) begin
             s_ready <= 1'b1;
             skid_data <= '0;
             skid_valid <= '0;
         end else begin
             if (skid_valid) begin
-                if (m_valid) begin 
+                if (m_ready) begin 
                     s_ready <= 1'b1;
                     skid_valid <= '0;
                 end else begin

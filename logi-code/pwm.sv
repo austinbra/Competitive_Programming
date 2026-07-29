@@ -16,7 +16,7 @@ module pwm_controller #(
     logic [PERIOD_BITS-1:0] period_reg;
     logic [PERIOD_BITS-1:0] duty_reg;
     logic [DT_BITS-1:0] dead_time_reg;
-    logic fault_pending;
+    logic fault_reg;
 
     logic initialized;
 
@@ -30,7 +30,7 @@ module pwm_controller #(
             duty_reg <= '0;
             dead_time_reg <= '0;
             initialized <= '0;
-            fault_pending <= '0;
+            fault_reg <= '0;
         end else begin
             if (!initialized) begin
                 count <= '0;
@@ -40,10 +40,10 @@ module pwm_controller #(
                 pwm_h <= '0;
                 pwm_l <= '0;
                 initialized <= 1'b1;
-                fault_pending <= ((duty + dead_time) >= period);
+                fault_reg <= ((duty + dead_time) >= period);
             end else begin
-                fault <= fault_pending;
-                if (fault_pending) begin
+                fault <= fault_reg;
+                if (fault_reg) begin
                     pwm_h <= '0;
                     pwm_l <= '0;
                 end else begin

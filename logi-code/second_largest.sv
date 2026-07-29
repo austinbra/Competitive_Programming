@@ -16,7 +16,7 @@ module second_largest #(
             dout <= '0;
             count <= 2'd0;
         end else begin
-            unique case (count)
+            case (count)
                 2'd0: begin
                     first <= din;
                     dout <= '0;

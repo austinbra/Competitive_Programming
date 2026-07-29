@@ -18,10 +18,7 @@ module rotate_left (
             for (i = 0; i < SHIFT_WIDTH; i = i + 1) begin : ROT_STAGE
                 localparam int AMT = 1 << i;
 
-                assign stage[i+1] =
-                    shift[i]
-                        ? {stage[i][WIDTH-AMT-1:0], stage[i][WIDTH-1:WIDTH-AMT]}
-                        : stage[i];
+                assign stage[i+1] = shift[i] ? {stage[i][WIDTH-AMT-1:0], stage[i][WIDTH-1:WIDTH-AMT]} : stage[i];
             end
 
             assign out = stage[SHIFT_WIDTH];

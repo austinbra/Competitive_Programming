@@ -10,11 +10,6 @@ module gray_to_bin #(
             bin[i] = bin[i+1] ^ gray[i];
         end
 
-        /*
-        for (int i = 0; i < DATA_WIDTH; i++) begin
-            bin[i] = ^(gray >> i);
-        end
-        */
     end
 endmodule
 // bin -> gray

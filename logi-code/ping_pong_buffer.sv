@@ -20,10 +20,8 @@ module ping_pong_buffer #(
     // Real data:  bank[x][0] through bank[x][DEPTH-1]
     // Dummy data: bank[x][DEPTH]
     //
-    // rd_ptr == DEPTH means the read bank is empty. Since rd_data is continuously
-    // assigned from bank[...][rd_ptr], the dummy slot makes that empty pointer a
-    // legal memory index. The dummy slot mirrors entry 0 so rd_data matches the
-    // reference behavior even when rd_valid is low.
+    // rd_ptr == DEPTH means the read bank is empty. the dummy slot makes that empty pointer a
+    // legal memory index. 
     logic [DATA_W-1:0] bank [0:1][0:DEPTH];
 
     logic [PTR_W-1:0] wr_ptr;   // 0..DEPTH, DEPTH means write bank full
@@ -40,52 +38,26 @@ module ping_pong_buffer #(
             rd_ptr   <= DEPTH;
             bank_sel <= 1'b0;
 
-            for (int b = 0; b < 2; b++) begin
-                for (int i = 0; i <= DEPTH; i++) begin
-                    bank[b][i] <= '0;
-                end
-            end
         end else begin
 
-            // Write side
             if (wr_en && wr_ready) begin
                 bank[bank_sel][wr_ptr] <= wr_data;
-
-                // Mirror the first real entry into the dummy slot.
-                // The reference effectively wraps rd_ptr == DEPTH back to index 0
-                // because it slices off the high pointer bit. This keeps rd_data
-                // identical without slicing or guarded-read logic.
-                if (wr_ptr == 0) begin
-                    bank[bank_sel][DEPTH] <= wr_data;
-                end
-
-                if (wr_ptr == DEPTH - 1) begin
-                    wr_ptr <= DEPTH;
-                end else begin
-                    wr_ptr <= wr_ptr + 1'b1;
-                end
+                wr_ptr <= wr_ptr + 1'b1;
             end
 
-            // Read side
             if (rd_en && rd_valid) begin
-                if (rd_ptr == DEPTH - 1) begin
-                    rd_ptr <= DEPTH;
-                end else begin
-                    rd_ptr <= rd_ptr + 1'b1;
-                end
+                rd_ptr <= rd_ptr + 1'b1;
             end
 
             // Swap only when the write bank was already full before this edge.
-            // This matches the reference timing: the final write fills the bank,
-            // then a later edge swaps once the read bank is empty or becomes empty.
             if ((
-                    (wr_ptr == DEPTH) ||
-                    (wr_en && rd_valid && (wr_ptr == DEPTH - 1))
+                    (wr_ptr == DEPTH) || //set wr_ready low
+                    (wr_en && rd_valid && (wr_ptr == DEPTH - 1)) //if curr edge is last
                 )
                 &&
                 (
-                    (rd_ptr == DEPTH) ||
-                    (rd_en && rd_valid && (rd_ptr == DEPTH - 1))
+                    (rd_ptr == DEPTH) || //set rd_ready low
+                    (rd_en && rd_valid && (rd_ptr == DEPTH - 1)) //if curr edge is last
                 )
             ) begin
                 bank_sel <= ~bank_sel;
